@@ -1,0 +1,120 @@
+
+body{
+  margin: 0;
+  padding: 0;
+  background-image:url("./images/bg.PNG");
+  background-size: cover;
+  overflow-x: hidden;
+}
+
+
+.container{
+	width: 500px;
+	margin: auto;
+}
+h1.title {
+  font-family: 'Staatliches', cursive;
+  font-size: 6vw;
+  margin: 0;
+  margin-top: 5px;
+  text-align: center;
+  color:black;
+  
+}
+
+.heading {
+  background-color: #f1f1f1;
+  opacity: 90%;
+  border: black;
+  width: 500px;
+  margin-left: 516px;
+}
+
+.level-container{
+  float: right;
+  background-color: lightblue;
+  padding: 8px 10px;
+  border-radius: 3px;
+  text-align: center;
+  position: relative;
+  top: 5px;
+  bottom: 5px;
+}
+.level-container .level-title{
+  font-size: 20px;
+  font-family: 'Roboto Slab', serif;
+}
+.level-container .score-value{
+  font-size: 25px;
+  font-family: 'Roboto Slab', serif;
+  font-weight: bold;
+}
+
+.game-canvas{
+  margin: 8px auto;
+  border-radius: 5px;
+}
+.dialog-container, #about_game{
+  display: none;
+  background-color: #f1f1f1;
+  opacity: 90%;  
+  position: absolute;
+  top: 210px;
+  left: 200;
+  z-index: 100;
+}
+.dialog, #about_game {
+  font-weight: bold;
+  border-radius: 5px;
+  margin: 0 auto;
+  text-align: center;
+  font-family: 'Roboto Slab', serif;
+  color:black
+}
+
+.dialog {
+  width: 500px;
+  font-size: 35px;
+  padding-top: 130px;
+  height: 360px;
+}
+
+#about_game {
+  font-size: 25px;
+  width: 516px;
+  height: 480px;
+  margin-left: 500px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+
+.msg{
+  font-size: 25px;
+}
+ .replay-btn, .next-level-btn, .btn{
+  font-family: 'Roboto Slab', serif;
+  padding: 8px 10px;
+  width: 150px;
+  height: 40px;
+  line-height: 40px;
+  margin: 20px auto;
+  background: lightblue;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.replay-btn, .next-level-btn {
+  font-size: 20px;
+}
+
+.btn {
+  font-size: 50px;
+}
+
+
+.menu_btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+}

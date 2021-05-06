@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+  <head>
+    <title>!nside</title>
+    <link rel="stylesheet" href="./main.css" type="text/css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Staatliches&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  </head>
+
+  <body>
+    <div class="heading">
+      <h1 class="title">!nside</h1>
+    </div>
+    <div id="displayarea">
+      <div id="menu">
+          <br><br><br><br><br><br><br><br><br>
+            <div class="menu_btn">
+              <a class="btn" onclick="start_from_menu()"><b>START</b></a><br><br>
+              </div>
+              <br>
+              <br><br>
+              <div class="menu_btn">
+              <a class="btn" onclick="open_help()"><b>ABOUT GAME</b></a><br><br>
+             </div>
+      </div>
+
+      <div id="about_game" style="display: none;">
+      <p>Your Goal is to pass the Green Ball through the gaps in the wall.</p>
+      <p>You lose a point each time the ball hits the wall and bounces back.</p>
+      <p>Use A and D keys to rotate the Baffle clockwise and anticlockwise respectively.</p>
+      <p>Beware of the Red Ball !</p>
+      <br>
+      <a class="btn" onclick="back_to_menu()"><b>Back</b></a>
+      </div>
+
+      <div id="game_display" style="display: none;">
+    <div class="container">
+      <div class="dialog-container">
+        <div class="dialog">
+          <p class="msg"></p>
+          <div class="next-level-btn" style="display: none;">CONTINUE</div>
+          <div class="replay-btn">REPLAY</div>
+        </div>
+      </div>
+      <div class="level-container">
+        <div class="level-title">SCORE</div>
+        <div class="score-value">100</div>
+      </div>
+      <div class="game-container">
+        <canvas class="game-canvas" width = 500 height = 500 style="background-color: whitesmoke;"></canvas>
+      </div>
+    </div>
+    </div>
+
+    <script src="./js/game.js"></script>
+    <script>
+      (function() {
+        var cv = document.querySelector('canvas');
+        var cx = cv.getContext('2d');
+        cx.translate(cv.width / 2, cv.height / 2);
+        var ballRadius = Math.floor(0.02 * cv.width);
+        var game = new Game(ballRadius, cx);
+      })();
+    </script>
+  </body>
+</html>
