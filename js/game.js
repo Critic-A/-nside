@@ -55,7 +55,6 @@ Ball.prototype.hitsBaffle = function(baffle) {
 }
 
 Ball.prototype.hitsWall = function(wall) {
-  this.ballhit.decScore();
   var ball_angle = this.center.getPrincipalArgument();
   var holes = wall.holes;
   for (var i = 0, n = holes.length; i<n; i++) { 
@@ -72,7 +71,6 @@ Ball.prototype.hitsWall = function(wall) {
 }
 
 Ball.prototype.hitsEnemy = function(enemy) {
-
   var enemyCenter = enemy.getCenter();
   var x1 = this.center.x, y1 = this.center.y,
       x2 = enemyCenter.x, y2 = enemyCenter.y;
@@ -233,26 +231,30 @@ Enemy.prototype.display = function() {
   var cx = this.cx;
   cx.fillStyle = this.color;
   cx.beginPath();
+  xcentre= Math.floor(Math.random() * (51) ) + 50;
+  sign= Math.floor(Math.random() * (2) ) + 1;
+  if (sign===2) {
+    xcentre= xcentre*(-1);
+  }
+  ycentre= Math.floor(Math.random() * (51) ) + 50;
+  sign= Math.floor(Math.random() * (2) ) + 1;
+  if (sign===2) {
+    ycentre= xcentre*(-1);
+  }
   var center = this.getCenter();
   cx.arc(center.x, center.y, this.radius, 0, 2 * Math.PI, true);
   cx.closePath();
   cx.fill();
 };
 
-var xcentre, ycentre;
+var xcentre=100, ycentre=100, sign=1, enemy_no;
 
 Enemy.prototype.getCenter = function() {
-  return new Vector(this.d2origin * Math.cos(this.argument), this.d2origin * Math.sin(this.argument));
+  return new Vector(xcentre, ycentre);
 }
 
 Enemy.prototype.becomeBigger = function() {
   this.radius+=this.radius / 8;
-}
-
-Enemy.prototype.location = function() {
-  var max = Wall.radius, min= Baffle.length, xcentre,ycentre;
-  xcentre=Math.floor(Math.random() * (max - min + 1)) + min;
-  ycentre=Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 Enemy.prototype.changeArgument = function(game_level) {
@@ -265,6 +267,8 @@ Enemy.prototype.changeArgument = function(game_level) {
 /*------------------------------ENEMY MANAGER (END)-------------------------------------------*/
 
 /*------------------------------GAME MANAGER (START)-------------------------------------------*/
+var current_score=100;
+
 function Game(ballRadius, cx) {
   this.ballRadius = ballRadius;
   this.cx = cx;
@@ -286,8 +290,8 @@ Game.prototype.start = function() {
   this.moveBall();
   this.inputManager.on('rotateBaffle', this.rotateBaffle.bind(this));
   this.inputManager.on('stopRotatingBaffle', this.stopRotatingBaffle.bind(this));
-  this.inputManager.on('replay', this.replay.bind(this));
   this.inputManager.on('gotoNextLevel', this.gotoNextLevel.bind(this));
+
 }
 
 Game.prototype.prepareBaffle = function() {
@@ -329,6 +333,7 @@ Game.prototype.moveBall = function() {
       ball.velocity.x = newVelocity.x;
       ball.velocity.y = newVelocity.y;
     } else if (ball.hitsWall(wall)) {
+      current_score--;
       wallbounce.play();
       newVelocity = ball.rebound(ball.getWallTheta());
       ball.velocity.x = newVelocity.x;
@@ -354,6 +359,7 @@ Game.prototype.rotateBaffle = function(direction) {
     baffle.rotateRequest = requestAnimationFrame(animate);
   }
   baffle.rotateRequest = requestAnimationFrame(animate);
+  this.uiManager.updateScore(current_score);
 
 }
 
@@ -361,6 +367,7 @@ Game.prototype.stopRotatingBaffle = function() {
   var baffle = this.baffle;
   baffle.stopRotating();
   baffle.rotating = false;
+  this.uiManager.updateScore(current_score);
 }
 
 Game.prototype.win = function() {
@@ -374,18 +381,11 @@ Game.prototype.lose = function() {
   this.uiManager.lose();
 }
 
-Game.prototype.replay = function() { 
-  this.uiManager.removeDialog();
-  this.uiManager.clearContext(this.cx);
-  this.resetCurrentLevel();
-  this.moveBall();
-}
-
 
 Game.prototype.gotoNextLevel = function() { 
 
   this.levelManager.nextLevel();
-  this.uiManager.updateScore(this.levelManager.score);
+  this.uiManager.updateScore(current_score);
   this.uiManager.removeDialog();
   this.uiManager.clearContext(this.cx);
   this.resetBaffleAndBall();
@@ -403,7 +403,7 @@ Game.prototype.gotoNextLevel = function() {
 
 Game.prototype.resetCurrentLevel = function() {
   this.levelManager.level=1;
-  this.levelManager.score=100;
+  current_score=100;
   this.resetBaffleAndBall();
   this.enemy.display();
   this.wall.display();
@@ -448,7 +448,6 @@ function InputManager() {
  
  InputManager.prototype.listenToButtons = function() {
    this.bindButtonPress('.next-level-btn', this.gotoNextLevel);
-   this.bindButtonPress('.replay-btn', this.replay); 
  }
  
  InputManager.prototype.listenToKeyboard = function() {
@@ -477,10 +476,6 @@ function InputManager() {
  
  }
  
- InputManager.prototype.replay = function(event) {
-   event.preventDefault();
-   this.emit('replay');
- }
  
  InputManager.prototype.gotoNextLevel = function(event) {
    event.preventDefault();
@@ -515,7 +510,6 @@ function UIManager() {
   this.cv = document.querySelector('canvas');
   this.dialogContainer = document.querySelector('.dialog-container')
   this.dialog = this.dialogContainer.querySelector('.dialog');
-  this.replayBtn = this.dialog.querySelector('.replay-btn');
   this.dialogMsg = this.dialog.querySelector('.msg');
   this.nextLevelBtn = this.dialog.querySelector('.next-level-btn');
 }
@@ -561,10 +555,10 @@ UIManager.prototype.updateScore = function(score) {
 /*------------------------------LEVEL MANAGER (START)-------------------------------------------*/
 function LevelManager() {
   this.level = 1;
-  this.score=100;
   this.levelConfig = {
     1: {
       holesOptions:  {holesNum: 12, startAngle: Math.PI/24, holeAngle: Math.PI / 16}
+
     },
     2: {
       holesOptions:  {holesNum: 12, startAngle: Math.PI /24, holeAngle: Math.PI / 18}
@@ -649,13 +643,8 @@ LevelManager.prototype.getLevelEnemyOptions = function() {
 
 LevelManager.prototype.nextLevel = function() {
   this.level++;
-  this.score+=100;
+  current_score+=100;
 }
-
-LevelManager.prototype.decScore = function() {
-  this.score--;
-}
-
 
 
 LevelManager.prototype.levelsOver = function() {
